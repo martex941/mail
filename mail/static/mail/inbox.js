@@ -91,6 +91,14 @@ function open_email(email_id) {
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
 
+  // Change the read boolean in JSON file to true
+  fetch(`/emails/${email_id}`, {
+    method: 'PUT',
+    body: JSON.stringify({
+        read: true
+    })
+  });
+
   // Fetch the email using id from the argument
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
