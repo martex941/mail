@@ -65,6 +65,11 @@ function load_mailbox(mailbox) {
     console.log(emails);
     emails.forEach(element => {
       const email_div = document.createElement('div');
+
+      email_div.addEventListener('click', () => {
+        open_email(element.id);
+      });
+
       if (!element.read)  {
         email_div.className = 'email unread row';
       }
@@ -82,9 +87,9 @@ function load_mailbox(mailbox) {
 function open_email(email_id) {
 
   // Hide every view aside from open-email view
-  document.querySelector('#emails-view'.style.display = 'none');
-  document.querySelector('#compose-view'.style.display = 'none');
-  document.querySelector('#open-email-view'.style.display = 'block');
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#open-email-view').style.display = 'block';
 
   // Fetch the email using id from the argument
   fetch(`/emails/${email_id}`)
