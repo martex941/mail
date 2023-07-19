@@ -21,11 +21,13 @@ function compose_email() {
   document.querySelector('#compose-subject').value = '';
   document.querySelector('#compose-body').value = '';
 
+  // Listen for form submission
   document.querySelector('#compose-form').onsubmit = () => {
     const recipients = document.querySelector("#compose-recipients").value;
     const subject = document.querySelector("#compose-subject").value;
     const body = document.querySelector("#compose-body").value;
 
+    // Use API to send the email to the database
     fetch('/emails', {
       method: 'POST',
       body: JSON.stringify({
@@ -40,6 +42,7 @@ function compose_email() {
       console.log(result);
     });
 
+    // Load the sent mailbox and return false to prevent default form submission
     load_mailbox('sent');
     return false;
   };
@@ -76,6 +79,18 @@ function load_mailbox(mailbox) {
   });
 };
 
-function open_email(email) {
+function open_email(email_id) {
 
+  // Hide every view aside from open-email view
+  document.querySelector('#emails-view'.style.display = 'none');
+  document.querySelector('#compose-view'.style.display = 'none');
+  document.querySelector('#open-email-view'.style.display = 'block');
+
+  // Fetch the email using id from the argument
+  fetch(`/emails/${email_id}`)
+  .then(response => response.json())
+  .then(email => {
+      // Print email
+      console.log(email);
+  });
 }
