@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.querySelector('#compose').addEventListener('click', compose_email);
 
   // By default, load the inbox
-  load_mailbox('index');
+  load_mailbox('inbox');
 });
 
 function compose_email() {
@@ -55,24 +55,17 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
+  // Use the api to fetch the specific mailbox and display email information in their own divs
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
   .then(emails => {
-    console.log(`emails here: ${emails}`);
+    console.log(emails);
+    emails.forEach(element => {
+      const email_div = document.createElement('div');
+      email_div.className = 'email';
+      email_div.innerHTML = `${element.recipients}, ${element.subject}, ${element.timestamp}`;
+
+      document.querySelector('#emails-view').append(email_div);
+    });
   });
-
-  emails.forEach(email => {
-    add_email(email);
-  });
-
-
-  function add_email(email) {
-    // Create new email div
-    const email_div = document.createElement('div');
-    email_div.className = 'email';
-    email_div.innerHTML = email;
-
-    // Add email to DOM
-    document.querySelector('#emails-view').append(email);
-  };
 };
