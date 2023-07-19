@@ -62,10 +62,20 @@ function load_mailbox(mailbox) {
     console.log(emails);
     emails.forEach(element => {
       const email_div = document.createElement('div');
-      email_div.className = 'email';
-      email_div.innerHTML = `${element.recipients}, ${element.subject}, ${element.timestamp}`;
+      if (!element.read)  {
+        email_div.className = 'email unread row';
+      }
+      else {
+        email_div.className = 'email read row';
+      }
+
+      email_div.innerHTML = `<h5 class="col-3 sender">${element.recipients}</h5> <h5 class="col subject">${element.subject}</h5> <h5 class="col-2 timestamp">${element.timestamp}</h5>`;
 
       document.querySelector('#emails-view').append(email_div);
     });
   });
 };
+
+function open_email(email) {
+
+}

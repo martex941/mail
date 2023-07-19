@@ -1,3 +1,31 @@
 textarea {
     min-height: 400px;
 }
+
+h5 {
+    font-size: medium;
+}
+
+.email {
+    border: #dee2e6 1px solid;
+    border-radius: 5px;
+    margin: 0.5rem;
+}
+
+.email.unread {
+    background-color: white;
+}
+
+.email.read {
+    background-color: rgb(216, 216, 216);
+}
+
+.row {
+    padding: 0.5rem;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.col, .col-3, .col-2 {
+    margin: 0.3rem;
+}

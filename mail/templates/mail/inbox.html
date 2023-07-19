@@ -15,19 +15,22 @@
     <div id="emails-view">
     </div>
 
+    <div id="open-email-view">
+    </div>
+
     <div id="compose-view">
         <h3>New Email</h3>
         <form id="compose-form">
-            <div class="form-group">
+            <div class="mb-3 form-label">
                 From: <input disabled class="form-control" value="{{ request.user.email }}">
             </div>
-            <div class="form-group">
+            <div class="mb-3 form-label">
                 To: <input id="compose-recipients" class="form-control">
             </div>
-            <div class="form-group">
+            <div class="mb-3 form-label">
                 <input class="form-control" id="compose-subject" placeholder="Subject">
             </div>
-            <textarea class="form-control" id="compose-body" placeholder="Body"></textarea>
+            <textarea rows="6" class="form-control" id="compose-body" placeholder="Body"></textarea>
             <input type="submit" class="btn btn-primary"/>
         </form>
     </div>
