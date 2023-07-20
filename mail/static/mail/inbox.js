@@ -81,8 +81,8 @@ function load_mailbox(mailbox) {
       }
 
       email_div.innerHTML = 
-      `<h5 class="col-3 sender">${element.recipients}
-      </h5> <h5 class="col subject">${element.subject}</h5> 
+      `<h5 class="col-3 sender">${element.recipients}</h5> 
+      <h5 class="col subject">${element.subject}</h5> 
       <h5 class="col-2 timestamp">${element.timestamp}</h5>`;
 
       document.querySelector('#emails-view').append(email_div);
@@ -96,6 +96,16 @@ function open_email(email_id) {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
+
+  function archive(email_id) {
+    fetch(`/emails/${email_id}`, {
+      method: 'PUT',
+      body: JSON.stringify({
+          archive: true
+      })
+    });
+  }
+
 
   // Change the read boolean in JSON file to true
   fetch(`/emails/${email_id}`, {
