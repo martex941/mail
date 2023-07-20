@@ -18,11 +18,19 @@
     <div id="open-email-view">
         <div class="email-open container">
             <!-- oe = open email -->
-            <h5 id="oe-sender"></h5>
-            <h5 id="oe-recipients">To: {recipients}</h5>
             <div class="row">
-                <h4 class="col" id="oe-subject">{subject}</h4>
-                <span class="col-2" id="oe-timestamp">Date: {timestamp}</span>    
+                <div class="col">
+                    <h5 id="oe-sender"></h5>
+                    <h5 id="oe-recipients">To: {recipients}</h5>
+                    <h4 id="oe-subject">{subject}</h4>
+                    <div id="btn-reply">
+                    </div>
+                </div>
+                <div class="col-2 d-flex flex-column align-items-end">
+                    <span id="oe-timestamp">Date: {timestamp}</span>
+                    <div id="btn-archive">
+                    </div>
+                </div>
             </div>
             <hr>
             <p id="oe-content">

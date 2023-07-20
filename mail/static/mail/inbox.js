@@ -112,6 +112,9 @@ function open_email(email_id) {
       // Print email
       console.log(email);
 
+      document.getElementById("btn-archive").innerHTML = `<button onclick=archive(${email.id}) class="btn btn-danger">Archive</button>`;
+      document.getElementById("btn-reply").innerHTML = `<button onclick=reply(${email.id}) class="btn btn-primary">Reply</button>`;
+
       // Send the JSON information to html layout
       document.getElementById("oe-sender").innerHTML = `From: ${email.sender}`;
       document.getElementById("oe-recipients").innerHTML = `To: ${email.recipients}`;

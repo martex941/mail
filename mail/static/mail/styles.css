@@ -35,3 +35,17 @@ h5 {
 .col, .col-3, .col-2 {
     margin: 0.3rem;
 }
+
+hr {
+    margin: 0;
+}
+
+#btn-archive {
+    width: 78px;
+}
+
+#oe-timestamp {
+    flex-grow: 1;
+    text-align: right;
+    width: 153px;
+}
