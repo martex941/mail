@@ -15,6 +15,7 @@ function compose_email() {
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#open-email-view').style.display = 'none';
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -54,10 +55,12 @@ function load_mailbox(mailbox) {
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
   document.querySelector('#compose-view').style.display = 'none';
+  document.querySelector('#open-email-view').style.display = 'none';
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
+  
   // Use the api to fetch the specific mailbox and display email information in their own divs
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
@@ -77,7 +80,10 @@ function load_mailbox(mailbox) {
         email_div.className = 'email read row';
       }
 
-      email_div.innerHTML = `<h5 class="col-3 sender">${element.recipients}</h5> <h5 class="col subject">${element.subject}</h5> <h5 class="col-2 timestamp">${element.timestamp}</h5>`;
+      email_div.innerHTML = 
+      `<h5 class="col-3 sender">${element.recipients}
+      </h5> <h5 class="col subject">${element.subject}</h5> 
+      <h5 class="col-2 timestamp">${element.timestamp}</h5>`;
 
       document.querySelector('#emails-view').append(email_div);
     });
@@ -105,5 +111,13 @@ function open_email(email_id) {
   .then(email => {
       // Print email
       console.log(email);
+
+      // Send the JSON information to html layout
+      document.getElementById("oe-sender").innerHTML = `From: ${email.sender}`;
+      document.getElementById("oe-recipients").innerHTML = `To: ${email.recipients}`;
+      document.getElementById("oe-subject").innerHTML = email.subject;
+      document.getElementById("oe-timestamp").innerHTML = email.timestamp;
+      document.getElementById("oe-content").innerHTML = email.body;
+
   });
 }

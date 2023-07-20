@@ -12,12 +12,18 @@ h5 {
     margin: 0.5rem;
 }
 
+.email:hover {
+    cursor: pointer;
+    transition: 1s;
+    border: #363636 1px solid;
+}
+
 .email.unread {
-    background-color: white;
+    background-color: rgb(243, 243, 243);
 }
 
 .email.read {
-    background-color: rgb(216, 216, 216);
+    background-color: rgb(235, 234, 234);
 }
 
 .row {
