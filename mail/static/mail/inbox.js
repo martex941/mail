@@ -97,16 +97,6 @@ function open_email(email_id) {
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
 
-  function archive(email_id) {
-    fetch(`/emails/${email_id}`, {
-      method: 'PUT',
-      body: JSON.stringify({
-          archive: true
-      })
-    });
-  }
-
-
   // Change the read boolean in JSON file to true
   fetch(`/emails/${email_id}`, {
     method: 'PUT',
@@ -122,8 +112,43 @@ function open_email(email_id) {
       // Print email
       console.log(email);
 
-      document.getElementById("btn-archive").innerHTML = `<button onclick=archive(${email.id}) class="btn btn-danger">Archive</button>`;
-      document.getElementById("btn-reply").innerHTML = `<button onclick=reply(${email.id}) class="btn btn-primary">Reply</button>`;
+      const user_email = document.getElementById("user-email").getAttribute('data-email');
+
+      if (email.sender == user_email) {
+        document.querySelector("#btn-archive").style.display = 'none';
+        document.querySelector("#btn-reply").style.display = 'none';
+      }
+      else {
+        document.querySelector("#btn-archive").style.display = 'block';
+        document.querySelector("#btn-reply").style.display = 'block';
+      }
+
+      if (!email.archived) {
+        document.getElementById("btn-archive").innerHTML = `<button class="btn btn-danger">Archive</button>`;
+        document.getElementById("btn-archive").addEventListener('click', () => {
+          fetch(`/emails/${email_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: true
+            })
+          });
+          load_mailbox('inbox');
+        });
+      }
+      else {
+        document.getElementById("btn-archive").innerHTML = `<button class="btn btn-secondary">Unarchive</button>`;
+        document.getElementById("btn-archive").addEventListener('click', () => {
+          fetch(`/emails/${email_id}`, {
+            method: 'PUT',
+            body: JSON.stringify({
+                archived: false
+            })
+          });
+          load_mailbox('inbox');
+        });
+      }
+      
+      document.getElementById("btn-reply").innerHTML = `<button class="btn btn-primary">Reply</button>`;
 
       // Send the JSON information to html layout
       document.getElementById("oe-sender").innerHTML = `From: ${email.sender}`;
