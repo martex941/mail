@@ -69,10 +69,12 @@ function load_mailbox(mailbox) {
     emails.forEach(element => {
       const email_div = document.createElement('div');
 
+      // Open the email if the user clicks on it
       email_div.addEventListener('click', () => {
         open_email(element.id);
       });
 
+      // Check whether the email is read or unread and apply specific class to it
       if (!element.read)  {
         email_div.className = 'email unread row';
       }
@@ -80,15 +82,65 @@ function load_mailbox(mailbox) {
         email_div.className = 'email read row';
       }
 
+      // Send information to be displayed in HTML page
       email_div.innerHTML = 
-      `<h5 class="col-3 sender">${element.recipients}</h5> 
+      `<h5 class="col-3 sender">${element.sender}</h5> 
       <h5 class="col subject">${element.subject}</h5> 
       <h5 class="col-2 timestamp">${element.timestamp}</h5>`;
-
       document.querySelector('#emails-view').append(email_div);
     });
   });
 };
+
+function reply(recipient, subject, body, timestamp) {
+
+  // Show compose view and hide other views
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+  document.querySelector('#open-email-view').style.display = 'none';
+
+  // Fill out composition fields
+  document.querySelector('#compose-recipients').value = `${recipient}`;
+
+  if (document.querySelector("#compose-subjet") == "Re:") {
+    // Do nothing
+  }
+  else {
+    document.querySelector('#compose-subject').value = `Re: ${subject}`;
+  }
+
+  document.querySelector('#compose-body').value = 
+  `
+  On ${timestamp} ${recipient} wrote:
+  ${body}`;
+
+  // Listen for form submission
+  document.querySelector('#compose-form').onsubmit = () => {
+    const recipients = document.querySelector("#compose-recipients").value;
+    const subject = document.querySelector("#compose-subject").value;
+    const body = document.querySelector("#compose-body").value;
+
+    // Use API to send the email to the database
+    fetch('/emails', {
+      method: 'POST',
+      body: JSON.stringify({
+        recipients: recipients,
+        subject: subject,
+        body: body
+      })
+    })
+    .then(response => response.json())
+    .then(result => {
+      // Print result
+      console.log(result);
+    });
+
+    // Load the sent mailbox and return false to prevent default form submission
+    load_mailbox('sent');
+    return false;
+  };
+};
+
 
 function open_email(email_id) {
 
@@ -112,8 +164,8 @@ function open_email(email_id) {
       // Print email
       console.log(email);
 
+      // Check if the email is in 'sent' mailbox by comparing sender to current user
       const user_email = document.getElementById("user-email").getAttribute('data-email');
-
       if (email.sender == user_email) {
         document.querySelector("#btn-archive").style.display = 'none';
         document.querySelector("#btn-reply").style.display = 'none';
@@ -123,8 +175,9 @@ function open_email(email_id) {
         document.querySelector("#btn-reply").style.display = 'block';
       }
 
+      // Check if the email is archived and display the appropriate button
       if (!email.archived) {
-        document.getElementById("btn-archive").innerHTML = `<button class="btn btn-danger">Archive</button>`;
+        document.getElementById("btn-archive").innerHTML = '<button class="btn btn-danger">Archive</button>';
         document.getElementById("btn-archive").addEventListener('click', () => {
           fetch(`/emails/${email_id}`, {
             method: 'PUT',
@@ -132,10 +185,12 @@ function open_email(email_id) {
                 archived: true
             })
           });
+          document.getElementById("btn-archive").removeEventListener('click', );
           load_mailbox('inbox');
         });
       }
-      else {
+
+      if (email.archived) {
         document.getElementById("btn-archive").innerHTML = `<button class="btn btn-secondary">Unarchive</button>`;
         document.getElementById("btn-archive").addEventListener('click', () => {
           fetch(`/emails/${email_id}`, {
@@ -148,14 +203,17 @@ function open_email(email_id) {
         });
       }
       
+      // Make reply button and listen 
       document.getElementById("btn-reply").innerHTML = `<button class="btn btn-primary">Reply</button>`;
+      document.getElementById("btn-reply").addEventListener('click', () => {
+        reply(email.sender, email.subject, email.body, email.timestamp);
+      });
 
-      // Send the JSON information to html layout
+      // Send the JSON information to HTML page
       document.getElementById("oe-sender").innerHTML = `From: ${email.sender}`;
       document.getElementById("oe-recipients").innerHTML = `To: ${email.recipients}`;
       document.getElementById("oe-subject").innerHTML = email.subject;
       document.getElementById("oe-timestamp").innerHTML = email.timestamp;
       document.getElementById("oe-content").innerHTML = email.body;
-
   });
 }

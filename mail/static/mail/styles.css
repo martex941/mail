@@ -32,12 +32,20 @@ h5 {
     padding-right: 0;
 }
 
+.sender {
+    font-weight: bold;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .col, .col-3, .col-2 {
     margin: 0.3rem;
 }
 
 hr {
     margin: 0;
+    margin-bottom: 1rem;
 }
 
 #btn-archive {
@@ -47,5 +55,5 @@ hr {
 #oe-timestamp {
     flex-grow: 1;
     text-align: right;
-    width: 153px;
+    width: 155px;
 }
