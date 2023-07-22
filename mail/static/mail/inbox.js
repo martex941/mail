@@ -41,13 +41,12 @@ function compose_email() {
     .then(result => {
       // Print result
       console.log(result);
-    });
+    })
+    .then(load_mailbox('inbox'));
 
-    // Load the sent mailbox and return false to prevent default form submission
-    load_mailbox('sent');
+    // Return false to prevent default form submission
     return false;
   };
-
 };
 
 function load_mailbox(mailbox) {
@@ -60,7 +59,6 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 
-  
   // Use the api to fetch the specific mailbox and display email information in their own divs
   fetch(`/emails/${mailbox}`)
   .then(response => response.json())
@@ -133,10 +131,10 @@ function reply(recipient, subject, body, timestamp) {
     .then(result => {
       // Print result
       console.log(result);
-    });
+    })
+    .then(load_mailbox('inbox'));
 
-    // Load the sent mailbox and return false to prevent default form submission
-    load_mailbox('sent');
+    // Return false to prevent default form submission
     return false;
   };
 };
@@ -149,14 +147,6 @@ function open_email(email_id) {
   document.querySelector('#compose-view').style.display = 'none';
   document.querySelector('#open-email-view').style.display = 'block';
 
-  // Change the read boolean in JSON file to true
-  fetch(`/emails/${email_id}`, {
-    method: 'PUT',
-    body: JSON.stringify({
-        read: true
-    })
-  });
-
   // Fetch the email using id from the argument
   fetch(`/emails/${email_id}`)
   .then(response => response.json())
@@ -164,43 +154,66 @@ function open_email(email_id) {
       // Print email
       console.log(email);
 
+      if (email.read) {
+        // Do nothing
+      }
+      else {
+        // Change the read boolean in JSON file to true
+        fetch(`/emails/${email_id}`, {
+          method: 'PUT',
+          body: JSON.stringify({
+              read: true
+          })
+        });
+      }
+
       // Check if the email is in 'sent' mailbox by comparing sender to current user
       const user_email = document.getElementById("user-email").getAttribute('data-email');
       if (email.sender == user_email) {
-        document.querySelector("#btn-archive").style.display = 'none';
+        document.querySelector("#div-archive").style.display = 'none';
         document.querySelector("#btn-reply").style.display = 'none';
       }
       else {
-        document.querySelector("#btn-archive").style.display = 'block';
+        document.querySelector("#div-archive").style.display = 'block';
         document.querySelector("#btn-reply").style.display = 'block';
       }
 
       // Check if the email is archived and display the appropriate button
       if (!email.archived) {
-        document.getElementById("btn-archive").innerHTML = '<button class="btn btn-danger">Archive</button>';
-        document.getElementById("btn-archive").addEventListener('click', () => {
-          fetch(`/emails/${email_id}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                archived: true
+        document.getElementById("div-archive").innerHTML = '<button class="btn btn-danger" id="btn-archive">Archive</button>';
+        if (document.getElementById("btn-archive")) {
+          document.getElementById("btn-archive").addEventListener('click', () => {
+            fetch(`/emails/${email_id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                  archived: true
+              })
             })
+            // Setting the timeout is crucial for the server to catch up with updating the archived e-mail
+            // Instant load_mailbox function causes the website to still display archived e-mails
+            setTimeout(() => {
+              load_mailbox('inbox');
+            }, 100);
           });
-          document.getElementById("btn-archive").removeEventListener('click', );
-          load_mailbox('inbox');
-        });
+        }
       }
-
-      if (email.archived) {
-        document.getElementById("btn-archive").innerHTML = `<button class="btn btn-secondary">Unarchive</button>`;
-        document.getElementById("btn-archive").addEventListener('click', () => {
-          fetch(`/emails/${email_id}`, {
-            method: 'PUT',
-            body: JSON.stringify({
-                archived: false
+      else {
+        document.getElementById("div-archive").innerHTML = `<button class="btn btn-secondary" id="btn-unarchive">Unarchive</button>`;
+        if (document.getElementById("btn-unarchive")){
+          document.getElementById("btn-unarchive").addEventListener('click', () => {
+            fetch(`/emails/${email_id}`, {
+              method: 'PUT',
+              body: JSON.stringify({
+                  archived: false
+              })
             })
+            // Setting the timeout is crucial for the server to catch up with updating the archived e-mail
+            // Instant load_mailbox function causes the website to still display archived e-mails
+            setTimeout(() => {
+              load_mailbox('inbox');
+            }, 100);
           });
-          load_mailbox('inbox');
-        });
+        }
       }
       
       // Make reply button and listen 
@@ -216,4 +229,4 @@ function open_email(email_id) {
       document.getElementById("oe-timestamp").innerHTML = email.timestamp;
       document.getElementById("oe-content").innerHTML = email.body;
   });
-}
+};
