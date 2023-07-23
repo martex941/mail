@@ -101,12 +101,18 @@ function reply(recipient, subject, body, timestamp) {
   document.querySelector('#compose-recipients').value = `${recipient}`;
 
   // Check whether the subject begins with "Re:" case insensitively
-  let sub = subject.substring(0, 3).toUpperCase();
+  const sub = subject.substring(0, 3).toUpperCase();
+
+  console.log(sub);
+  console.log(subject);
+
   if (sub == "RE:") {
     document.querySelector('#compose-subject').value = `${subject}`;
+    console.log(subject);
   }
-  else if (!sub == "RE:"){
+  else {
     document.querySelector('#compose-subject').value = `Re: ${subject}`;
+    console.log(subject);
   }
 
   document.querySelector('#compose-body').value = 
